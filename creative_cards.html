@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Cards</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
+
+        .card {
+            width: 400px;
+            height: 600px;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 16px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            padding: 10px;
+            margin: 16px 32px;
+            text-align: center;
+        }
+
+        .quote-container:before {
+            content: "“";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            top: -20px;
+            left: -50px;
+        }
+
+        .quote-container:after {
+            content: "”";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            bottom: -75px;
+            right: -30px;
+        }
+
+        .quote-container .quote {
+          width: 90%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #8b0000; 
+            text-align: left;
+            margin-top: 32px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+            {
+              id: 1,
+              title: "Embrace Constraints",
+              content: "Constraints often force ingenuity and resourcefulness, turning limitations into creative breakthroughs.",
+              example: "Jaws became a classic when Spielberg used a malfunctioning shark prop to focus on suspenseful music and cinematography.",
+              insight: "Constraints encourage prioritization and amplify creative focus, often leading to impactful results.",
+              prompt: "How can you turn a current limitation into a creative advantage?"
+            },
+            {
+                id: 2,
+                title: "Borrow and Remix",
+                content: "Creativity doesn’t exist in a vacuum. Great ideas often arise from blending existing concepts into something novel. Borrowing and remixing encourages the reinterpretation of known elements.",
+                example: "Quentin Tarantino’s Kill Bill (2003-2004) is an homage to a variety of genres, including kung fu movies, spaghetti westerns, and Japanese anime. The film borrows visual styles, music, and tropes from these sources, yet it synthesizes them into a unique narrative that feels fresh and innovative. For example, the anime sequence explaining O-Ren Ishii’s backstory is a nod to Japanese animation but serves a distinct storytelling purpose.",
+                insight: "Remixing broadens the range of possibilities and enriches your work by building on the resonance of existing elements. By combining familiar elements in new ways, creators offer both novelty and nostalgia.",
+                prompt: "What existing ideas or styles can you combine in your current project to create something unique?"
+            },
+            {
+                id: 3,
+                title: "Start with the Ending",
+                content: "Knowing where you’re headed gives focus and clarity to the creative process. Working backward from a powerful or impactful ending helps ensure that every preceding element aligns cohesively.",
+                example: "Breaking Bad’s creator Vince Gilligan famously plotted the series’s ending—Walter White’s transformation into 'Heisenberg'—from the outset. By defining this ultimate destination, the writing team could craft story arcs, character developments, and thematic elements that progressively built to this climax. The resulting narrative felt inevitable yet surprising.",
+                insight: "Starting with the end ensures a sense of purpose and direction. It’s easier to navigate the creative journey when you have a clear endpoint, allowing you to structure your work intentionally and avoid aimless exploration.",
+                prompt: "If you imagined your project’s conclusion right now, how would it inform the decisions you make today?"
+            },
+            {
+              id: 4,
+              title: "Observe Everyday Life",
+              content: "Creativity often lies in the mundane. Observing the world around you with curiosity can uncover patterns, ideas, and emotions that resonate universally.",
+              example: "Singer-songwriter Adele’s breakout hit “Someone Like You” was inspired by a personal heartbreak, but it’s her ability to capture the raw, universal emotions of love and loss that struck a chord worldwide. Adele’s lyrics and delivery felt authentic because they drew from real-life experiences and observations.",
+              insight: "Everyday life provides a wealth of relatable material. Observing the human condition and translating it into creative work builds emotional connections with your audience.",
+              prompt: "What small detail from your daily life could be expanded into a broader creative idea?"
+            },
+            {
+              id: 5,
+              title: "Break One Rule at a Time",
+              content: "Defying conventions can lead to groundbreaking work, but doing so recklessly can alienate your audience. Breaking one rule strategically while adhering to others maintains balance and focus.",
+              example: "Radiohead’s album Kid A (2000) defied expectations by largely abandoning guitars, a staple of their previous rock sound. Instead, the band embraced electronic music, resulting in a polarising yet acclaimed work. By breaking this 'rock band' rule while maintaining their lyrical depth and song craft, they expanded their creative horizons without losing their identity.",
+              insight: "Breaking one rule at a time allows room for experimentation while retaining enough familiarity to keep your audience engaged. This approach ensures that your work feels innovative rather than chaotic.",
+              prompt: "What single convention in your field could you challenge to push boundaries without losing coherence?"
+            },
+            {
+              id: 6,
+              title: "Collaborate with Unlikely Partners",
+              content: "Collaboration often brings fresh perspectives, but working with individuals from entirely different fields or backgrounds can unlock unexpected synergies and innovations.",
+              example: "The hit song “Walk This Way” by Aerosmith and Run-DMC (1986) was a groundbreaking collaboration that blended rock and hip-hop. This unlikely partnership bridged two genres, creating a cultural phenomenon that introduced rap to mainstream audiences and revitalised Aerosmith’s career. The collaboration reshaped both music genres and remains iconic decades later.",
+              insight: "Collaborating with unlikely partners challenges assumptions and sparks creativity by combining distinct strengths. The fusion of contrasting ideas often leads to groundbreaking outcomes.",
+              prompt: "Who from a completely different field could you collaborate with to enhance your project?"
+            },
+            {
+              id: 7,
+              title: "Simplify to Amplify",
+              content: "Complexity can overwhelm both creators and audiences. Stripping your idea down to its essence often reveals its strongest and most impactful components.",
+              example: "Steve Jobs’s focus on simplicity transformed Apple’s design philosophy. The original iPod, with its minimalist design and intuitive scroll wheel, revolutionized how people accessed and listened to music. By prioritizing ease of use, Apple created a product that was both functional and universally appealing.",
+              insight: "Simplification cuts through noise, allowing the core of your idea to shine. It ensures accessibility and focuses attention on what truly matters.",
+              prompt: "What elements of your current project can you remove to clarify its impact?"
+            },
+            {
+              id: 8,
+              title: "Turn Weaknesses into Strengths",
+              content: "What might initially appear as a flaw can often be reframed as a unique advantage. Embracing imperfections can add character and authenticity to your work.",
+              example: "Singer-songwriter Bob Dylan’s unconventional voice has been criticized for its roughness, yet it’s this very quality that gives his music authenticity and emotional depth. Songs like “Blowin’ in the Wind” and “The Times They Are A-Changin’” resonate because Dylan’s voice conveys raw emotion and sincerity.",
+              insight: "Highlighting perceived weaknesses can make your work stand out and connect with audiences on a deeper level. Authenticity often trumps perfection.",
+              prompt: "How can you embrace a perceived weakness in your project and make it a defining feature?"
+            },
+            {
+              id: 9,
+              title: "Prototype Early",
+              content: "Waiting for perfection can delay progress and stifle creativity. Rapid prototyping allows you to test and refine ideas quickly, identifying strengths and weaknesses.",
+              example: "The Wright brothers didn’t build a perfect airplane on their first attempt. Instead, they created a series of prototypes, testing and refining their designs through trial and error. Their iterative approach led to the first successful powered flight in 1903.",
+              insight: "Prototyping fosters learning and adaptability. Early iterations provide valuable feedback, enabling you to make improvements and build momentum.",
+              prompt: "What aspect of your idea can you prototype today to start gathering feedback?"
+            },
+            {
+              id: 10,
+              title: "Create for a Niche Audience",
+              content: "Trying to please everyone often dilutes your vision. Focusing on a specific audience allows you to craft work that deeply resonates with a particular group.",
+              example: "Netflix’s Stranger Things initially targeted fans of 1980s nostalgia and science fiction. By catering to this niche, the show developed a dedicated fan base that propelled it to mainstream success. Its specific references and themes created an authentic and immersive experience.",
+              insight: "Niche audiences often have unmet needs and are more likely to embrace work that speaks directly to them. Success with a niche can eventually lead to broader appeal.",
+              prompt: "Who is the specific audience for your project, and how can you tailor your work to resonate with them?"
+            },
+            {
+              id: 11,
+              title: "Combine Unrelated Ideas",
+              content: "Some of the most groundbreaking innovations arise from combining concepts or elements that seem unrelated at first glance. This approach can spark novel solutions and fresh perspectives.",
+              example: "The invention of the modern smartphone combines communication technology with personal computing. Steve Jobs famously merged the iPod’s music functionality with a phone and internet browsing, creating the iPhone in 2007. This fusion transformed how people interact with technology, making the smartphone an essential tool for modern life.",
+              insight: "Juxtaposing unrelated ideas forces you to think outside conventional boundaries, often leading to creative breakthroughs that redefine industries.",
+              prompt: "What two unrelated ideas or concepts can you combine to create something innovative?"
+            },
+            {
+              id: 12,
+              title: "Leverage Serendipity",
+              content: "Some of the best ideas come from happy accidents. Being open to unexpected connections and occurrences can lead to innovative breakthroughs.",
+              example: "Penicillin was discovered accidentally by Alexander Fleming in 1928 when he noticed that a mould contaminating a petri dish killed surrounding bacteria. This serendipitous observation revolutionised medicine and saved countless lives.",
+              insight: "Embracing and exploring accidental discoveries can lead to transformative innovations that might not have emerged through deliberate effort alone.",
+              prompt: "How can you create an environment where happy accidents are more likely to occur?"
+            },
+            {
+              id: 13,
+              title: "Blend Analog and Digital",
+              content: "The combination of analog and digital mediums can create unique, hybrid experiences that leverage the best of both worlds.",
+              example: "The success of music bands like Daft Punk lies in their seamless blending of analog instruments and digital production. Their 2013 album Random Access Memories used live recordings with electronic enhancements, resulting in a timeless sound.",
+              insight: "Mixing old and new techniques enriches the creative process, creating outcomes that feel both innovative and familiar.",
+              prompt: "What analog elements can you incorporate into your digital project, or vice versa?"
+            },
+            {
+              id: 14,
+              title: "Harness Tension and Release",
+              content: "Building tension and offering a satisfying release is a powerful way to engage audiences and make your work memorable.",
+              example: "Christopher Nolan’s Inception (2010) uses a layered dream structure to build tension, culminating in the unresolved final scene with the spinning top. This tension and partial release kept audiences engaged and fostered endless debates.",
+              insight: "Managing tension and release creates emotional impact and encourages deeper engagement with your audience.",
+              prompt: "How can you incorporate tension and release into your current project to keep your audience invested?"
+            },
+            {
+              id: 15,
+              title: "Explore Uncharted Territory",
+              content: "Pioneering new ideas or themes is risky but can lead to groundbreaking work that sets you apart from the crowd.",
+              example: "James Cameron’s Avatar (2009) introduced innovative 3D technology and an entirely immersive alien world. The film became a global phenomenon due to its technological and visual breakthroughs.",
+              insight: "Exploring uncharted territory allows you to create something entirely unique, establishing yourself as a leader and innovator.",
+              prompt: "What uncharted aspect of your field can you explore to differentiate your work?"
+            },
+            {
+              id: 16,
+              title: "Focus on Storytelling",
+              content: "Humans are naturally drawn to stories. Framing your ideas or products within a compelling narrative increases engagement and memorability.",
+              example: "Nike’s 'Just Do It' campaign doesn’t just sell shoes; it tells stories of perseverance, achievement, and overcoming obstacles. These narratives inspire emotional connections, making Nike one of the most recognised brands in the world.",
+              insight: "Stories resonate emotionally, helping audiences connect with your work on a deeper level. A well-told story can make even complex ideas relatable and accessible.",
+              prompt: "How can you incorporate storytelling into your current project to make it more impactful?"
+            },
+            {
+              id: 17,
+              title: "Work in Iterations",
+              content: "Rarely does a perfect idea emerge fully formed. Iterative processes allow you to refine and improve through experimentation and feedback.",
+              example: "James Dyson created over 5,000 prototypes before finalising the design for his revolutionary bagless vacuum cleaner. Each iteration brought him closer to a product that solved user pain points effectively.",
+              insight: "Iteration ensures continuous improvement. By testing and revising, you can identify and fix weaknesses, leading to a polished final product.",
+              prompt: "What aspect of your project can you improve through iterative testing and feedback?"
+            },
+            {
+              id: 18,
+              title: "Use Humour to Innovate",
+              content: "Humour can disarm, engage, and offer a fresh lens through which to view challenges. It often helps break down barriers to creativity.",
+              example: "The 1984 Apple Macintosh commercial '1984' employed humour and satire to position Apple as a revolutionary alternative to corporate conformity. The ad’s playful yet bold approach made it one of the most memorable campaigns in history.",
+              insight: "Humour encourages people to let go of rigid thinking, creating space for innovative ideas to emerge. It also makes your work more approachable and relatable.",
+              prompt: "How can humour be used in your project to engage and challenge conventional thinking?"
+            },
+            {
+              id: 19,
+              title: "Start with a Question",
+              content: "Questions provoke curiosity and open-ended exploration. Starting with a compelling question can guide your ideation process toward meaningful discoveries.",
+              example: "Elon Musk’s question, 'Why isn’t sustainable energy more widely adopted?' led to the creation of Tesla and SpaceX. These companies address significant challenges through innovative technologies.",
+              insight: "Questions clarify goals and encourage a solutions-oriented mindset, fostering deeper exploration and creativity.",
+              prompt: "What question can you ask to inspire your next creative breakthrough?"
+            },
+            {
+              id: 20,
+              title: "Think in Systems",
+              content: "Creativity often thrives when considering the bigger picture. Thinking in systems involves understanding how individual parts interconnect to form a whole.",
+              example: "In video game design, the success of The Legend of Zelda: Breath of the Wild (2017) lies in its systemic approach. The game's physics, weather, and exploration systems interact in dynamic ways, creating emergent gameplay. For instance, players can combine fire, wind, and objects in unexpected ways, allowing for creative problem-solving.",
+              insight: "Systemic thinking fosters a holistic perspective, encouraging solutions that align with larger goals while enabling creativity at every level.",
+              prompt: "How can you design your project to function as an interconnected system rather than isolated parts?"
+            },
+            {
+              id: 21,
+              title: "Seek Inspiration from Nature",
+              content: "Nature is one of the most consistent sources of inspiration, offering insights into design, structure, and problem-solving.",
+              example: "The invention of Velcro was inspired by burrs that stuck to Swiss engineer George de Mestral's dog. He studied their microscopic hooks and loops, leading to the development of the revolutionary fastening system now used worldwide.",
+              insight: "Nature provides elegant and efficient solutions to complex problems. By observing natural phenomena, you can find creative answers to modern challenges.",
+              prompt: "What natural processes or designs can you study to inform your current project?"
+            },
+            {
+              id: 22,
+              title: "Use Absurdity to Break Routines",
+              content: "Absurdity disrupts conventional thinking, forcing the brain to explore unconventional paths.",
+              example: "The surrealist art movement, exemplified by Salvador Dalí's The Persistence of Memory, used bizarre and dreamlike imagery to challenge perceptions of time and reality. This approach opened new frontiers in art and philosophy.",
+              insight: "Embracing the absurd sparks curiosity and disrupts entrenched thought patterns, leading to unexpected breakthroughs.",
+              prompt: "What absurd or unconventional idea can you introduce into your project to inspire fresh thinking?"
+            },
+            {
+              id: 23,
+              title: "Focus on Emotional Resonance",
+              content: "Ideas that evoke strong emotions are more likely to be remembered and shared.",
+              example: "Pixar films, such as Inside Out (2015), succeed because they tap into universal emotions. By personifying emotions like Joy, Sadness, and Anger, the film created a powerful narrative that resonated deeply with audiences of all ages.",
+              insight: "Emotional resonance strengthens connections between your work and its audience, ensuring a lasting impact.",
+              prompt: "How can you infuse your project with emotional elements to make it more relatable and memorable?"
+            },
+            {
+              id: 24,
+              title: "Reimagine the Familiar",
+              content: "Sometimes, the best ideas come from looking at familiar concepts with a fresh perspective.",
+              example: "Banksy's street art reimagines public spaces, transforming ordinary walls into thought-provoking works of social commentary. His art challenges perceptions of property, value, and societal norms.",
+              insight: "Reimagining the familiar encourages audiences to reconsider their assumptions, creating a sense of novelty and intrigue.",
+              prompt: "What familiar concept can you reimagine to create a fresh and engaging idea?"
+            },
+            {
+              id: 25,
+              title: "Design for Playfulness",
+              content: "Playfulness fosters experimentation, creativity, and joy, often leading to unexpected discoveries.",
+              example: "Google’s Doodles, interactive designs of its logo, bring a sense of playfulness to the search engine. These lighthearted and often educational changes keep users engaged and entertained.",
+              insight: "Playfulness lowers inhibitions and encourages exploration, allowing for innovative ideas to emerge naturally.",
+              prompt: "How can you make your project more playful to encourage curiosity and engagement?"
+            },
+            {
+              id: 26,
+              title: "Simplify Complex Concepts",
+              content: "Breaking down complexity makes ideas more accessible and impactful.",
+              example: "Stephen Hawking’s A Brief History of Time translates complex astrophysical theories into language understandable by non-scientists. This accessibility brought scientific ideas to a global audience.",
+              insight: "Simplifying complexity broadens your audience and ensures your ideas are communicated effectively.",
+              prompt: "What complex aspect of your project can you simplify to make it more accessible?"
+            },
+            {
+              title: "Find the Tension Between Opposites",
+              content: "Balancing opposing forces often leads to dynamic and compelling ideas.",
+              example: "The success of Hamilton by Lin-Manuel Miranda lies in its fusion of traditional Broadway storytelling with contemporary hip-hop music. This tension between old and new created a groundbreaking and widely acclaimed production.",
+              insight: "The tension between opposites generates energy and intrigue, capturing audience attention.",
+              prompt: "What opposing forces can you integrate into your project to create dynamic results?"
+            },
+            {
+              id: 27,
+              title: "Embrace Failure as a Learning Tool",
+              content: "Failure is not the opposite of success but an essential step in the creative process.",
+              example: "Thomas Edison famously said, 'I have not failed. I've just found 10,000 ways that won't work,' during his quest to create the electric light bulb. Each failure brought him closer to success.",
+              insight: "Viewing failure as a learning opportunity reduces fear and encourages experimentation, leading to innovation.",
+              prompt: "How can you reframe failure in your project as a step toward success?"
+            },
+            {
+              id: 28,
+              title: "Solve a Problem You Care About",
+              content: "Passion fuels perseverance and creativity. Solving problems you care deeply about often leads to the most impactful work.",
+              example: "Malala Yousafzai’s advocacy for girls’ education stems from her personal experiences and passion for the cause. Her efforts have inspired global movements and policy changes.",
+              insight: "Working on meaningful problems keeps you motivated and ensures your work has purpose and authenticity.",
+              prompt: "What problem do you care about deeply, and how can you address it through your work?"
+            },
+            {
+              id: 29,
+              title: "Look to the Past for Inspiration",
+              content: "Revisiting historical events, movements, or inventions can provide a wealth of ideas to reimagine or modernize.",
+              example: "Baz Luhrmann’s The Great Gatsby (2013) reinterpreted a classic novel through a modern lens, incorporating contemporary music while staying true to the story’s themes. This blend of old and new made the film resonate with modern audiences.",
+              insight: "The past offers a treasure trove of ideas that can be adapted to suit contemporary tastes or challenges, creating a bridge between eras.",
+              prompt: "What historical idea or event can you reinterpret for a modern audience?"
+            },
+            {
+              id: 30,
+              title: "Use Constraints as Creative Fuel",
+              content: "Rather than seeing constraints as limitations, view them as challenges to inspire ingenuity.",
+              example: "The Dogme 95 film movement, led by Lars von Trier, used strict rules like natural lighting and handheld cameras. These constraints forced filmmakers to focus on story and acting, leading to raw and impactful storytelling.",
+              insight: "Constraints encourage creators to think outside the box, pushing boundaries in unexpected directions.",
+              prompt: "How can you use a current limitation to spark innovation in your work?"
+            },
+            {
+              id: 31,
+              title: "Think Globally, Act Locally",
+              content: "Global issues often manifest in local contexts. Tackling them on a smaller scale can lead to meaningful impact.",
+              example: "The organisation Charity: Water addresses the global water crisis by focusing on community-specific solutions, like drilling wells tailored to local geography. This localised approach ensures sustainability and effectiveness.",
+              insight: "Starting locally allows you to test solutions and build models that can be scaled globally, making the task more manageable and impactful.",
+              prompt: "How can you apply a global idea to address a local issue?"
+            },
+            {
+              id: 32,
+              title: "Challenge Conventional Wisdom",
+              content: "Questioning established norms can lead to disruptive innovations and breakthroughs.",
+              example: "Elon Musk’s SpaceX challenged the assumption that rockets couldn’t be reused. By developing reusable rockets, the company drastically reduced the cost of space exploration, opening new possibilities.",
+              insight: "Breaking free from traditional assumptions fosters a mindset open to revolutionary ideas and approaches.",
+              prompt: "What conventional assumption in your field can you challenge to create a breakthrough?"
+            },
+            {
+              id: 33,
+              title: "Find Beauty in Imperfection",
+              content: "Embracing flaws or imperfections can add authenticity and uniqueness to your work.",
+              example: "Japanese kintsugi pottery repairs broken items with gold, highlighting cracks rather than hiding them. This art form celebrates imperfections as part of an object’s history and beauty.",
+              insight: "Imperfections often tell a story and create emotional connections, adding depth and character to creative work.",
+              prompt: "How can you highlight imperfections in your work to enhance its authenticity?"
+            },
+            {
+              id: 34,
+              title: "Engage All the Senses",
+              content: "Multi-sensory experiences captivate audiences and leave a lasting impression.",
+              example: "Disneyland uses sights, sounds, smells, and even textures to immerse visitors fully. From the scent of cookies on Main Street to the feel of water sprays on rides, the park creates a holistic sensory experience.",
+              insight: "Engaging multiple senses strengthens emotional connections and makes your work more memorable.",
+              prompt: "How can you incorporate multi-sensory elements into your project to enhance audience engagement?"
+            },
+            {
+              id: 35,
+              title: "Collaborate Across Disciplines",
+              content: "Bringing together experts from diverse fields often leads to fresh perspectives and innovative solutions.",
+              example: "The MIT Media Lab combines art, science, and technology to create groundbreaking innovations, like advanced prosthetics and interactive media.",
+              insight: "Interdisciplinary collaboration sparks creativity by exposing individuals to new ways of thinking and problem-solving.",
+              prompt: "Who from a different field can you collaborate with to expand your project’s potential?"
+            },
+            {
+              id: 36,
+              title: "Create a Sense of Mystery",
+              content: "Mystery draws people in, compelling them to explore and engage with your work.",
+              example: "J.J. Abrams’s 'mystery box' approach in Lost kept viewers hooked by revealing answers slowly while introducing new questions. This balance of resolution and intrigue built a dedicated fanbase.",
+              insight: "Mystery engages curiosity, encouraging deeper interaction and investment in your ideas.",
+              prompt: "How can you use mystery to captivate and sustain interest in your project?"
+            },
+            {
+              id: 37,
+              title: "Use Contrasts to Enhance Impact",
+              content: "Juxtaposing opposites can create striking effects and amplify your message.",
+              example: "The movie Schindler’s List contrasts black-and-white cinematography with moments of colour to emphasise emotional and thematic elements, like the red coat symbolising innocence amidst the horrors of war.",
+              insight: "Contrasts highlight differences, making each element stand out more vividly and leaving a stronger impression.",
+              prompt: "What contrasting elements can you combine in your work to amplify its impact?"
+            },
+            {
+              id: 38,
+              title: "Harness the Power of Ritual",
+              content: "Rituals create meaning and foster a sense of connection or belonging.",
+              example: "Coca-Cola’s holiday campaigns have become a yearly ritual, with iconic imagery like Santa Claus and polar bears evoking nostalgia and warmth.",
+              insight: "Rituals tap into human psychology, building emotional ties and fostering loyalty over time.",
+              prompt: "What rituals can you create around your project to strengthen its connection with your audience?"
+            },
+            {
+              id: 39,
+              title: "Build Anticipation",
+              content: "Anticipation keeps audiences engaged, eager to see what happens next.",
+              example: "The marketing campaign for Avengers: Endgame (2019) masterfully built anticipation by releasing cryptic trailers that revealed just enough to intrigue fans without giving away key plot points. This strategy kept viewers guessing and heightened excitement.",
+              insight: "Creating anticipation sustains interest and excitement, making your audience more invested in the final outcome.",
+              prompt: "How can you build anticipation to keep your audience engaged?"
+            },
+            {
+              id: 40,
+              title: "Encourage User Participation",
+              content: "Inviting your audience to contribute fosters a sense of ownership and engagement.",
+              example: "LEGO Ideas allows fans to submit their own designs for new LEGO sets. Successful submissions, like the NASA Apollo Saturn V set, have become bestsellers, driven by the enthusiasm of the community.",
+              insight: "Participation creates a personal connection, transforming passive audiences into active contributors and advocates.",
+              prompt: "How can you involve your audience in shaping your project?"
+            },
+            {
+              id: 41,
+              title: "Design for Longevity",
+              content: "Timeless ideas resonate across generations, maintaining relevance long after their creation.",
+              example: "Charles and Ray Eames’s mid-century modern furniture designs, such as the Eames Lounge Chair, remain iconic and highly sought-after decades after their debut.",
+              insight: "Focusing on timeless principles like simplicity and quality ensures enduring appeal and value.",
+              prompt: "How can you design your project to remain relevant and valuable over time?"
+            },
+            {
+              id: 42,
+              title: "Balance Form and Function",
+              content: "The best ideas harmonise aesthetics with practicality, ensuring both beauty and usability.",
+              example: "Apple’s iPhone revolutionised smartphones by combining sleek, minimalist design with powerful functionality. This balance made it both a status symbol and a practical tool.",
+              insight: "Integrating form and function creates solutions that are both visually appealing and highly effective.",
+              prompt: "How can you balance aesthetics and utility in your project?"
+            },
+            {
+              id: 43,
+              title: "Adapt to Changing Contexts",
+              content: "Flexibility and adaptability are essential for maintaining relevance in a rapidly evolving world.",
+              example: "Netflix began as a DVD rental service but pivoted to streaming and eventually original content production, adapting to shifts in technology and consumer behavior to become an entertainment giant.",
+              insight: "Adapting to change allows you to seize new opportunities and avoid obsolescence.",
+              prompt: "How can you ensure your project remains adaptable to future changes?"
+            },
+            {
+              id: 44,
+              title: "Surprise Your Audience",
+              content: "Unexpected elements delight audiences and keep them engaged.",
+              example: "Banksy’s self-destructing artwork Love is in the Bin shocked audiences when it shredded itself immediately after being auctioned for $1.4 million. The surprise made the piece even more valuable and memorable.",
+              insight: "Surprises create memorable moments that differentiate your work and capture attention.",
+              prompt: "What unexpected element can you introduce to surprise and engage your audience?"
+            },
+            {
+              id: 45,
+              title: "Align with Core Values",
+              content: "Staying true to your values builds trust and authenticity.",
+              example: "Patagonia’s commitment to environmental sustainability is reflected in its products and campaigns, such as the 'Don’t Buy This Jacket' ad that encouraged mindful consumption. This alignment with core values has fostered a loyal customer base.",
+              insight: "Authenticity resonates with audiences, strengthening emotional connections and trust.",
+              prompt: "How can you ensure your project aligns with your core values?"
+            },
+            {
+              id: 46,
+              title: "Make It Shareable",
+              content: "Ideas that are easily shared amplify your reach and impact.",
+              example: "Spotify’s Wrapped feature, which allows users to share their yearly listening habits, turns data into personalised, shareable stories. This feature has become a viral phenomenon.",
+              insight: "Shareable ideas spread organically, increasing visibility and engagement without additional effort.",
+              prompt: "How can you design your project to encourage sharing?"
+            },
+            {
+              id: 47,
+              title: "Celebrate Small Wins",
+              content: "Acknowledging progress, even in small increments, boosts morale and maintains momentum.",
+              example: "Video games like The Legend of Zelda: Breath of the Wild reward players with small achievements, such as discovering hidden treasures or solving puzzles. These moments keep players motivated to continue exploring.",
+              insight: "Celebrating small wins fosters a sense of accomplishment and encourages perseverance.",
+              prompt: "How can you incorporate milestones to celebrate progress in your project?"
+            },
+            {
+              id: 48,
+              title: "Inspire Hope",
+              content: "Hope is a powerful motivator that drives people to act and believe in possibilities.",
+              example: "Barack Obama’s 2008 'Hope' campaign centered on messages of optimism and change, inspiring millions to engage in the political process.",
+              insight: "Inspiring hope creates emotional resonance and motivates action, making your idea more compelling.",
+              prompt: "How can your project inspire hope and optimism in your audience?"
+            },
+            {
+              id: 49,
+              title: "Find Unexpected Connections",
+              content: "Sometimes the most innovative ideas emerge from connecting two unrelated domains.",
+              example: "The invention of the Swiffer mop came from observing the efficiency of disposable items like paper towels and applying that principle to floor cleaning. This fusion of ideas led to a widely successful product.",
+              insight: "Exploring connections between unrelated concepts fosters innovation and challenges conventional problem-solving approaches.",
+              prompt: "What unrelated concept or field can you draw from to enhance your current project?"
+          },
+          {
+              id: 50,
+              title: "Leverage Artificial Constraints",
+              content: "Imposing artificial limits can inspire creativity and resourcefulness.",
+              example: "The 10-minute play format challenges writers to tell compelling stories within a strict time limit. This constraint has produced countless impactful and concise narratives in theatre.",
+              insight: "Deliberate constraints force you to innovate within boundaries, often leading to more focused and creative outcomes.",
+              prompt: "What artificial constraint can you impose to inspire innovation in your work?"
+          },
+          {
+              id: 51,
+              title: "Tap into Collective Memory",
+              content: "Shared cultural or historical moments can create a sense of unity and resonance.",
+              example: "Coca-Cola’s 'Share a Coke' campaign used names on bottles, tapping into personal connections and shared cultural practices, making the product feel more personal and memorable.",
+              insight: "Referencing collective experiences fosters a connection with your audience by appealing to their shared memories.",
+              prompt: "What shared memory or cultural touchstone can you reference to strengthen your project?"
+          },
+          {
+              id: 52,
+              title: "Harness Minimalism",
+              content: "Simplifying down to the core elements creates clarity and impact.",
+              example: "Marie Kondo’s decluttering philosophy focuses on keeping only what 'sparks joy.' This minimalist approach resonated globally, simplifying the overwhelming task of tidying into a profound emotional exercise.",
+              insight: "Minimalism highlights what’s essential, making your message clearer and more impactful.",
+              prompt: "What can you remove from your project to better emphasize its core essence?"
+          },
+          {
+              id: 53,
+              title: "Create Open-Ended Experiences",
+              content: "Leaving room for interpretation invites your audience to participate in the meaning-making process.",
+              example: "The ending of Christopher Nolan’s Inception, with the spinning top, deliberately leaves the story open to interpretation, keeping audiences engaged and fostering discussion long after the credits roll.",
+              insight: "Open-ended experiences engage audiences by allowing them to explore their interpretations, deepening their emotional connection.",
+              prompt: "How can you make your project open-ended to invite deeper audience engagement?"
+          },
+          {
+              id: 54,
+              title: "Embrace Paradox",
+              content: "Exploring contradictions can create depth and complexity in your work.",
+              example: "Leonardo da Vinci’s Mona Lisa is enigmatic partly because of the paradox in her expression—her smile appears warm yet reserved, creating intrigue and debate for centuries.",
+              insight: "Paradoxes encourage exploration and challenge assumptions, adding layers to your work.",
+              prompt: "What paradoxical elements can you incorporate to add complexity and intrigue to your project?"
+          },
+          {
+              id: 55,
+              title: "Design for Unpredictability",
+              content: "Introducing controlled unpredictability keeps your audience engaged and curious.",
+              example: "The video game No Man’s Sky uses procedural generation to create a virtually infinite number of unique planets for players to explore, ensuring each experience is unexpected and novel.",
+              insight: "Unpredictability excites curiosity and encourages exploration, making your work more engaging.",
+              prompt: "How can you incorporate unpredictability to make your project more dynamic?"
+          },
+          {
+              id: 56,
+              title: "Build Anticipation Through Scarcity",
+              content: "Limiting access or teasing future developments generates excitement and demand.",
+              example: "The Marvel Cinematic Universe’s post-credit scenes teased future movies, keeping fans invested in the overarching storyline and eagerly anticipating the next installment.",
+              insight: "Strategic scarcity or teasing keeps audiences coming back for more by creating a sense of exclusivity and intrigue.",
+              prompt: "What element of your project can you reveal gradually to build anticipation?"
+          },
+          {
+              id: 57,
+              title: "Explore Negative Space",
+              content: "Sometimes, what you leave out is as important as what you include.",
+              example: "Apple’s advertising often uses minimalist layouts with ample negative space, directing attention to the product and emphasizing its simplicity and elegance.",
+              insight: "Using negative space allows your audience to focus on the most important elements, creating clarity and elegance.",
+              prompt: "How can you use negative space to emphasize the key message of your project?"
+          },
+          {
+              id: 58,
+              title: "Create Layers of Discovery",
+              content: "Designing work with multiple layers encourages audiences to revisit and explore further.",
+              example: "Studio Ghibli films often include subtle visual and narrative details that reward repeat viewings, deepening the audience’s appreciation over time.",
+              insight: "Layers of discovery make your work engaging and ensure it remains interesting with repeated exposure.",
+              prompt: "What hidden details can you incorporate to reward those who engage deeply with your project?"
+          },
+          {
+            id: 59,
+            title: "Turn Boredom into Ideas",
+            content: "Moments of boredom can unlock unexpected creativity by giving the mind space to wander.",
+            example: "J.K. Rowling conceptualized Harry Potter during a delayed train ride, letting her imagination fill the empty time.",
+            insight: "Boredom allows unstructured thought, creating opportunities for innovative ideas to surface.",
+            prompt: "How can you embrace moments of boredom to spark new ideas?"
+        },
+        {
+            id: 60,
+            title: "Reframe the Question",
+            content: "Approaching a challenge from a new angle often leads to innovative solutions.",
+            example: "Instead of asking how to make a phone smaller, Apple asked how to make it smarter, resulting in the iPhone.",
+            insight: "Reframing challenges encourages fresh perspectives and opens up creative possibilities.",
+            prompt: "What new question can you ask to reframe a challenge you’re facing?"
+        },
+        {
+            id: 61,
+            title: "Create an Alter Ego",
+            content: "Adopting an alter ego can help you explore ideas with freedom and confidence.",
+            example: "Beyoncé used her alter ego 'Sasha Fierce' to perform with boldness and break creative boundaries.",
+            insight: "An alter ego lets you step outside yourself, removing fear of judgment and unlocking bold creativity.",
+            prompt: "What kind of alter ego could help you approach your project with fresh energy?"
+        },
+        {
+            id: 62,
+            title: "Start with Constraints",
+            content: "Deliberately starting with restrictions can force you to innovate within boundaries.",
+            example: "The Twitter character limit led to the popularity of concise, witty communication and creative storytelling.",
+            insight: "Working within constraints fosters sharper focus and drives inventive solutions.",
+            prompt: "What limitation can you impose to inspire creativity in your current work?"
+        },
+        {
+            id: 63,
+            title: "Use Metaphors for Clarity",
+            content: "Metaphors help communicate complex ideas by connecting them to relatable concepts.",
+            example: "Einstein explained relativity by likening it to time flying with a loved one and dragging with a hand on a hot stove.",
+            insight: "Metaphors make abstract concepts tangible and accessible, fostering deeper understanding.",
+            prompt: "What metaphor can you use to simplify your project’s key idea?"
+        },
+        {
+            id: 64,
+            title: "Celebrate Contradictions",
+            content: "Exploring conflicting ideas can add richness and depth to your work.",
+            example: "Picasso’s art combined abstract forms with raw emotion, creating works that felt both chaotic and harmonious.",
+            insight: "Contradictions invite curiosity, challenging audiences to engage with complexity.",
+            prompt: "What contradictions can you highlight in your project to make it more intriguing?"
+        },
+        {
+            id: 65,
+            title: "Design for Serendipity",
+            content: "Creating spaces for chance encounters can lead to unexpected breakthroughs.",
+            example: "The open office layout at Pixar encouraged casual interactions, sparking collaboration across teams.",
+            insight: "Designing for serendipity fosters unplanned connections, often resulting in fresh perspectives.",
+            prompt: "How can you create opportunities for serendipity in your creative process?"
+        },
+        {
+            id: 66,
+            title: "Tell Stories Through Constraints",
+            content: "Limiting your storytelling tools can create more focused and impactful narratives.",
+            example: "The movie Buried takes place entirely in a coffin, forcing the story to rely on tension and dialogue instead of visual variety.",
+            insight: "Constraints in storytelling amplify creativity by sharpening focus on core elements.",
+            prompt: "How can you use constraints to shape a more compelling narrative in your project?"
+        },
+        {
+            id: 67,
+            title: "Flip the Script",
+            content: "Challenging conventional wisdom by reversing the norm can lead to surprising results.",
+            example: "Airbnb reimagined travel by flipping the hotel model, offering stays in people’s homes instead of commercial properties.",
+            insight: "Flipping expectations creates novelty, encouraging audiences to see familiar ideas in a new light.",
+            prompt: "What assumption in your field can you reverse to innovate?"
+        },
+        {
+            id: 68,
+            title: "Find Inspiration in Obsolescence",
+            content: "Old or outdated technologies can spark fresh ideas when viewed through a modern lens.",
+            example: "Polaroid cameras regained popularity as retro photography became a unique counterpoint to digital filters.",
+            insight: "What’s old often becomes new again, offering untapped potential in forgotten tools or trends.",
+            prompt: "What outdated concept can you revisit to inspire your current project?"
+        },
+        {
+          id: 69,
+          title: "Design for Impermanence",
+          content: "Embracing the temporary can create urgency and enhance impact.",
+          example: "The Burning Man festival builds a city in the desert, only to dismantle it completely, emphasizing the beauty of fleeting experiences.",
+          insight: "Impermanence creates a sense of urgency and encourages audiences to engage deeply in the moment.",
+          prompt: "How can you design your project to make its temporary nature part of its power?"
+      },
+      {
+          id: 70,
+          title: "Find Beauty in the Mundane",
+          content: "Highlighting ordinary objects or moments can reveal unexpected elegance.",
+          example: "Andy Warhol transformed Campbell’s soup cans into iconic pop art, celebrating the beauty of everyday consumer items.",
+          insight: "Shifting focus to the ordinary can challenge perceptions and elevate overlooked elements.",
+          prompt: "What everyday element can you reframe to inspire your audience?"
+      },
+      {
+          id: 71,
+          title: "Create Spaces for Reflection",
+          content: "Building pauses or spaces into your work allows deeper engagement and understanding.",
+          example: "In Hayao Miyazaki’s films, moments of 'ma' (emptiness) give audiences time to reflect, enhancing emotional impact.",
+          insight: "Silence and space amplify meaning, giving audiences room to interpret and connect.",
+          prompt: "How can you incorporate pauses or reflection points into your work?"
+      },
+      {
+          id: 72,
+          title: "Combine Form and Motion",
+          content: "Adding dynamic elements to static forms creates energy and engagement.",
+          example: "Calatrava’s architectural designs often resemble motion captured in static structures, such as wings mid-flap.",
+          insight: "Implying or incorporating movement breathes life into static works, evoking excitement and wonder.",
+          prompt: "How can you add a sense of motion to your project to make it feel more dynamic?"
+      },
+      {
+          id: 73,
+          title: "Use Constraints to Inspire Play",
+          content: "Purposeful constraints encourage playful experimentation and discovery.",
+          example: "LEGO’s fixed brick shapes inspire infinite creative possibilities through playful combination.",
+          insight: "Constraints can foster creativity by encouraging playful exploration of what’s possible within boundaries.",
+          prompt: "What playful constraint can you introduce to encourage discovery in your work?"
+      },
+      {
+          id: 74,
+          title: "Repurpose the Unusable",
+          content: "Transforming waste or discarded items into something meaningful gives new life to the forgotten.",
+          example: "El Anatsui creates stunning art installations using discarded materials like bottle caps and metal scraps.",
+          insight: "Repurposing challenges wastefulness and showcases the transformative potential of overlooked items.",
+          prompt: "What discarded material or concept can you repurpose into something valuable?"
+      },
+      {
+          id: 75,
+          title: "Amplify with Silence",
+          content: "Purposefully omitting sound or visuals can create tension and amplify focus.",
+          example: "In A Quiet Place, the lack of sound heightens suspense and forces audiences to focus on subtle details.",
+          insight: "Silence or absence can create powerful contrast, drawing attention to what’s present.",
+          prompt: "How can you use silence or absence to emphasize key moments in your project?"
+      },
+      {
+          id: 76,
+          title: "Create Adaptive Experiences",
+          content: "Designing flexible projects allows them to evolve with their audience or context.",
+          example: "Minecraft offers an open-world experience where players adapt the game to their creativity, making it highly personal.",
+          insight: "Adaptability ensures longevity and keeps audiences engaged by allowing them to shape their experience.",
+          prompt: "How can you make your project adaptive to different needs or interpretations?"
+      },
+      {
+          id: 77,
+          title: "Lean into Ambiguity",
+          content: "Leaving room for interpretation can make your work intriguing and thought-provoking.",
+          example: "The Mona Lisa’s enigmatic smile invites endless speculation, enhancing its timeless appeal.",
+          insight: "Ambiguity keeps audiences engaged by prompting them to explore their interpretations.",
+          prompt: "How can you add ambiguity to invite curiosity and deeper exploration?"
+      },
+      {
+          id: 78,
+          title: "Focus on the Edge Cases",
+          content: "Exploring the extremes or outliers in a system can reveal unexpected insights.",
+          example: "Dadaism challenged traditional art by embracing absurdity and anti-establishment themes, pushing the boundaries of creativity.",
+          insight: "Edge cases highlight what’s possible outside the norm, often leading to groundbreaking discoveries.",
+          prompt: "What fringe idea or extreme case can you explore to push the boundaries of your project?"
+      },
+      {
+          id: 79,
+          title: "Build for Failure",
+          content: "Designing with failure in mind can create resilience and adaptability.",
+          example: "The Mars rovers were designed with redundancy, allowing them to continue functioning even when parts failed, extending their missions far beyond expectations.",
+          insight: "Planning for failure ensures your work can adapt and thrive under unexpected conditions.",
+          prompt: "How can you design your project to function even when parts of it fail?"
+      },
+      {
+          id: 80,
+          title: "Focus on the Process, Not Just the Outcome",
+          content: "Celebrating the process can be as rewarding as achieving the end goal.",
+          example: "The Great British Bake Off emphasizes the joy of baking and learning over the competition itself, endearing it to viewers.",
+          insight: "Highlighting the journey makes your work relatable and encourages sustained engagement.",
+          prompt: "How can you showcase the process of creating your project to inspire others?"
+      },
+      {
+          id: 81,
+          title: "Play with Scale",
+          content: "Adjusting the size of elements can transform their impact and meaning.",
+          example: "Claes Oldenburg’s large-scale sculptures of everyday objects, like a giant clothespin, make the ordinary extraordinary.",
+          insight: "Changing scale shifts perspective and invites new interpretations of familiar things.",
+          prompt: "How can you alter the scale of your project’s elements to surprise and engage your audience?"
+      },
+      {
+          id: 82,
+          title: "Design for Obsolescence",
+          content: "Creating something intentionally ephemeral can highlight its value in the present.",
+          example: "Snapchat’s disappearing messages emphasize fleeting, in-the-moment interactions, shaping how people communicate.",
+          insight: "Temporary designs encourage focus on immediate impact and meaningful engagement.",
+          prompt: "How can your project embrace its temporary nature to maximize its impact?"
+      },
+      {
+          id: 83,
+          title: "Tell Stories Without Words",
+          content: "Visual storytelling can communicate powerful messages without relying on text or dialogue.",
+          example: "The opening scene of Pixar’s WALL-E tells a rich story through visuals and sound, with no dialogue for the first 20 minutes.",
+          insight: "Nonverbal storytelling transcends language barriers and creates universal connections.",
+          prompt: "How can you use visuals or sound alone to convey the essence of your project?"
+      },
+      {
+          id: 84,
+          title: "Draw Inspiration from the Impossible",
+          content: "Imagining the impossible can break creative barriers and lead to groundbreaking ideas.",
+          example: "Jules Verne’s novel `Twenty Thousand Leagues Under the Sea` inspired real-world submarines decades later.",
+          insight: "Exploring the impossible pushes the boundaries of what’s achievable and sparks bold innovations.",
+          prompt: "What seemingly impossible idea can you explore to inspire creativity in your project?"
+      },
+      {
+          id: 85,
+          title: "Use Repetition to Reinforce Impact",
+          content: "Repetition can create rhythm, emphasize ideas, and make your work more memorable.",
+          example: "Andy Warhol’s repeated prints of Marilyn Monroe turned her image into an icon of pop art, emphasizing mass production and celebrity culture.",
+          insight: "Repetition strengthens recognition and helps embed ideas in the audience’s mind.",
+          prompt: "What key element of your project can you repeat to reinforce its message?"
+      },
+      {
+          id: 86,
+          title: "Blur the Lines Between Mediums",
+          content: "Combining different mediums can lead to innovative, hybrid creations.",
+          example: "Lin-Manuel Miranda’s Hamilton fuses musical theatre with hip-hop, creating a groundbreaking experience that redefined Broadway.",
+          insight: "Blurring boundaries between mediums can attract diverse audiences and create something entirely new.",
+          prompt: "What mediums can you combine to add depth and innovation to your project?"
+      },
+      {
+          id: 87,
+          title: "Create an Alternate Timeline",
+          content: "Imagining a different version of reality can open new storytelling avenues.",
+          example: "The TV series `The Man in the High Castle` explores an alternate history where the Axis powers won WWII, sparking discussions about freedom and resistance.",
+          insight: "Alternate timelines allow audiences to reflect on current realities by contrasting them with imagined possibilities.",
+          prompt: "How can an alternate version of reality inspire fresh ideas for your project?"
+      },
+      {
+          id: 88,
+          title: "Show the Hidden Mechanics",
+          content: "Revealing the inner workings of a system can demystify and engage your audience.",
+          example: "Factory tours, like at Willy Wonka’s chocolate factory, fascinate audiences by showing how things are made behind the scenes.",
+          insight: "Transparency builds trust and curiosity, inviting audiences to connect with your work on a deeper level.",
+          prompt: "What behind-the-scenes aspect of your project can you reveal to engage your audience?"
+      },
+      {
+          id: 89,
+          title: "Use Time as a Tool",
+          content: "Time can be a creative constraint, shaping how ideas develop or are experienced.",
+          example: "Christopher Nolan’s Dunkirk uses three intersecting timelines to heighten tension and create a unique narrative structure.",
+          insight: "Manipulating time can add layers of depth and intrigue to your project.",
+          prompt: "How can you use time creatively to enhance your work?"
+      },
+      {
+          id: 90,
+          title: "Challenge the Audience",
+          content: "Engaging audiences in problem-solving or interpretation can deepen their connection to your work.",
+          example: "Escape rooms create immersive experiences that challenge participants to think critically and work collaboratively.",
+          insight: "Challenging your audience makes them active participants, fostering stronger engagement.",
+          prompt: "What challenge can you pose to your audience to make them part of your project?"
+      },
+      {
+          id: 91,
+          title: "Emphasize the Journey Over the Destination",
+          content: "Highlighting the experience rather than the outcome creates richer engagement.",
+          example: "Video games like Journey focus on the player’s emotional and aesthetic experience rather than achieving a traditional goal.",
+          insight: "Focusing on the journey builds deeper connections with the process and its nuances.",
+          prompt: "How can you make the journey of engaging with your project as meaningful as the outcome?"
+      },
+      {
+          id: 92,
+          title: "Create Multi-Dimensional Layers",
+          content: "Adding layers of meaning or experience invites repeated exploration.",
+          example: "Jordan Peele’s `Us` layers social commentary, horror, and symbolism, making it rewarding to revisit.",
+          insight: "Multi-dimensional works encourage audiences to uncover deeper meanings over time.",
+          prompt: "What layers can you add to your project to make it more engaging and thought-provoking?"
+      },
+      {
+          id: 93,
+          title: "Play with Symmetry and Asymmetry",
+          content: "The balance—or deliberate imbalance—of elements can evoke harmony or tension.",
+          example: "Wes Anderson’s films use precise symmetry to create visual harmony and a unique aesthetic.",
+          insight: "Symmetry creates order, while asymmetry introduces dynamism and intrigue.",
+          prompt: "How can you use symmetry or asymmetry to shape the visual or conceptual impact of your project?"
+      },
+      {
+          id: 94,
+          title: "Incorporate Movement into Stillness",
+          content: "Juxtaposing dynamic and static elements creates a powerful contrast.",
+          example: "In photography, long-exposure shots of moving water against static landscapes evoke tranquility and motion simultaneously.",
+          insight: "Combining movement and stillness creates tension and balance, amplifying engagement.",
+          prompt: "How can you incorporate movement or stillness to enhance your project?"
+      },
+      {
+          id: 95,
+          title: "Make the Absurd Relatable",
+          content: "Pairing absurd concepts with familiar elements creates intrigue and connection.",
+          example: "Salvador Dalí’s melting clocks in `The Persistence of Memory` merge the surreal with the relatable concept of time.",
+          insight: "Absurdity, when grounded in familiarity, invites curiosity and deeper reflection.",
+          prompt: "What absurd idea can you introduce to your work while keeping it relatable?"
+      },
+      {
+          id: 96,
+          title: "Explore Patterns and Repetition",
+          content: "Patterns add structure and predictability, making your work more engaging and memorable.",
+          example: "The Fibonacci sequence is used in art and architecture to create natural, pleasing patterns.",
+          insight: "Repetition and patterns draw audiences in and create a sense of rhythm and balance.",
+          prompt: "What pattern or repetition can you incorporate to create cohesion in your project?"
+      },
+      {
+          id: 97,
+          title: "Bring the Micro to the Macro",
+          content: "Zooming in on small details can create broader insights and impact.",
+          example: "David Attenborough’s nature documentaries focus on microscopic interactions to tell larger environmental stories.",
+          insight: "Highlighting small elements helps reveal the bigger picture in an engaging way.",
+          prompt: "How can you magnify a small detail to convey a larger idea in your project?"
+      },
+      {
+          id: 98,
+          title: "Use Contradiction as a Theme",
+          content: "Exploring opposing forces or ideas creates tension and depth.",
+          example: "In George Orwell’s `1984`, the concept of 'doublethink' explores the contradiction of holding two opposing beliefs simultaneously.",
+          insight: "Contradictions challenge audiences and invite them to grapple with complexity.",
+          prompt: "What contradictory forces can you explore to add richness to your project?"
+      },
+      {
+          id: 99,
+          title: "Highlight Hidden Stories",
+          content: "Uncovering untold or overlooked narratives can add originality and depth to your work.",
+          example: "Hidden Figures brought attention to the unsung contributions of Black women in NASA’s early space missions.",
+          insight: "Shedding light on hidden stories gives your audience fresh perspectives and new appreciation.",
+          prompt: "What overlooked story can you highlight to add depth to your project?"
+      },
+      {
+          id: 100,
+          title: "Celebrate the Imperfect Process",
+          content: "Showcasing flaws and imperfections can make your work more authentic and relatable.",
+          example: "Bob Ross’s painting show often highlighted 'happy accidents,' embracing mistakes as part of the creative process.",
+          insight: "Imperfections humanize your work, making it more approachable and genuine.",
+          prompt: "How can you celebrate imperfections to make your project more relatable and authentic?"
+      }];
+
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <h2>${card.title}</h2>
+      <p>${card.content}</p>
+      <p class="quote-container">${card.example}</p>
+      <p>${card.insight}</p>
+      <p class="question-container">${card.prompt}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>

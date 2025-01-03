@@ -2186,11 +2186,11 @@ let currentCardIndex = 0;
 
 function shuffleArrayExcludingCurrent(array, excludeIndex) {
     // Create a new array excluding the current card
-    const arrayExcludingCurrent = array.filter((_, index) => index !== excludeIndex);
+    let arrayExcludingCurrent = array.filter((_, index) => index !== excludeIndex);
 
     // Shuffle the reduced array
     for (let i = arrayExcludingCurrent.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        let j = Math.floor(Math.random() * (i + 1));
         [arrayExcludingCurrent[i], arrayExcludingCurrent[j]] = [arrayExcludingCurrent[j], arrayExcludingCurrent[i]];
     }
 

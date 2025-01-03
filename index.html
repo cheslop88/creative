@@ -18,7 +18,7 @@
 
         .card {
             width: 400px;
-            height: 600px;
+            height: 500px;
             padding: 20px;
             background: white;
             border: 2px solid #000;
@@ -75,8 +75,9 @@
         p {
             margin: 5px 0;
             line-height: 1.4;
-            font-size: 14px;
+            font-size: 16px;
             color: #333;
+            letter-spacing: 1.5px;
         }
 
         .quote-container {
@@ -87,6 +88,7 @@
             padding: 10px;
             margin: 16px 32px;
             text-align: center;
+            letter-spacing: 1.5px;
         }
 
         .quote-container:before {
@@ -117,6 +119,7 @@
             color: #000; 
             text-align: left;
             margin-top: 32px;
+            letter-spacing: 1.5px;
         }
         .reference {
           color: lightgrey;
@@ -2179,13 +2182,23 @@
 ]
 
 
-        let currentCardIndex = 0;
+let currentCardIndex = 0;
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+function shuffleArrayExcludingCurrent(array, excludeIndex) {
+    // Create a new array excluding the current card
+    const arrayExcludingCurrent = array.filter((_, index) => index !== excludeIndex);
+
+    // Shuffle the reduced array
+    for (let i = arrayExcludingCurrent.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arrayExcludingCurrent[i], arrayExcludingCurrent[j]] = [arrayExcludingCurrent[j], arrayExcludingCurrent[i]];
     }
+
+    // Add the excluded card back to the original array
+    const shuffledArray = [...arrayExcludingCurrent];
+    shuffledArray.splice(Math.floor(Math.random() * shuffledArray.length), 0, array[excludeIndex]);
+
+    return shuffledArray;
 }
 
 function shuffleAndShowCard() {
@@ -2193,12 +2206,18 @@ function shuffleAndShowCard() {
     cardContainer.classList.add('hidden');
 
     setTimeout(() => {
-        shuffleArray(cards);
-        currentCardIndex = 0;
+        // Shuffle the array while excluding the current card
+        const shuffledCards = shuffleArrayExcludingCurrent(cards, currentCardIndex);
+        cards = shuffledCards;
+
+        // Update the current card index to the next card
+        currentCardIndex = (currentCardIndex + 1) % cards.length;
+
         showCard(cards[currentCardIndex]);
         cardContainer.classList.remove('hidden');
     }, 600); // Matches animation duration
 }
+
 
 function showCard(card) {
     const cardContainer = document.getElementById('card-container');

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
+
+        .card {
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            width: 80%
+          }
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 32px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            padding: 10px;
+            margin: 0 32px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container:before {
+            content: "“";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            top: -20px;
+            left: -50px;
+        }
+
+        .quote-container:after {
+            content: "”";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            bottom: -75px;
+            right: -30px;
+        }
+
+        .quote-container .quote {
+          width: 90%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000; 
+            text-align: left;
+            margin-top: 32px;
+            letter-spacing: 1.5px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html">Back</a>
+    <br/>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+        {
+          id: 1,
+          author: "Henri Cartier-Bresson (1908–2004)",
+          quote: "Your first 10,000 photographs are your worst."
+        },
+        {
+          id: 2,
+          author: "Ray Dalio (1949–)",
+          quote: "To succeed, you need to try enough things to ensure a few of them work out."
+        },
+        {
+          id: 3,
+          author: "Thomas Edison (1847–1931)",
+          quote: "The creative process is 90% perspiration and 10% inspiration."
+        },
+        {
+          id: 4,
+          author: "John C. Maxwell (1947–)",
+          quote: "Fail early, fail often, but always fail forward."
+        },
+        {
+          id: 5,
+          author: "Anonymous",
+          quote: "A successful creative idea is one in a thousand that worked."
+        },
+        {
+          id: 6,
+          author: "Ken Robinson (1950–2020)",
+          quote: "If you're not prepared to be wrong, you'll never come up with anything original."
+        },
+        {
+          id: 7,
+          author: "Thomas J. Watson (1874–1956)",
+          quote: "The way to succeed is to double your failure rate."
+        },
+        {
+          id: 8,
+          author: "Anonymous",
+          quote: "Creativity is all about experimentation. Nine times out of ten, you’ll fail, but that one success makes it worth it."
+        },
+        {
+          id: 9,
+          author: "Napoleon Hill (1883–1970)",
+          quote: "Every failure brings with it the seed of an equivalent success."
+        },
+        {
+          id: 10,
+          author: "Buddha (563 BCE–483 BCE)",
+          quote: "An idea that is developed and put into action is more important than an idea that exists only as an idea."
+        },
+        {
+          id: 11,
+          author: "Marie Forleo (1975–)",
+          quote: "The key to success is to start before you're ready."
+        },
+        {
+          id: 12,
+          author: "Anonymous",
+          quote: "Imagination allows you to fail over and over again without ever losing enthusiasm."
+        },
+        {
+          id: 13,
+          author: "B.F. Skinner (1904–1990)",
+          quote: "A failure is not always a mistake; it may simply be the best one can do under the circumstances. The real mistake is to stop trying."
+        },
+        {
+          id: 14,
+          author: "Richard Branson (1950–)",
+          quote: "Do not be embarrassed by your failures; learn from them and start again."
+        },
+        {
+          id: 15,
+          author: "Anonymous",
+          quote: "It’s not about having the perfect idea; it’s about having enough bad ones to stumble upon a great one."
+        },
+        {
+          id: 16,
+          author: "Linus Pauling (1901–1994)",
+          quote: "I think it’s more important to have a lot of ideas than to be careful about eliminating bad ones."
+        },
+        {
+          id: 17,
+          author: "Edwin Land (1909–1991)",
+          quote: "An essential aspect of creativity is not being afraid to fail."
+        },
+        {
+          id: 18,
+          author: "Anonymous",
+          quote: "Sometimes you just have to throw a lot of paint at the wall to see what sticks."
+        },
+        {
+          id: 19,
+          author: "Anonymous",
+          quote: "Creativity is trial and error, iteration, and the courage to keep going despite the failures."
+        },
+        {
+          id: 20,
+          author: "Anonymous",
+          quote: "To succeed, you must fail many times, because the secret of success is resilience."
+        }
+]
+
+
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <p class="quote-container">${card.quote}</p>
+      <p>${card.author}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Sparks</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
+
+        .card {
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            width: 80%
+          }
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 16px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            padding: 10px;
+            margin: 16px 32px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container:before {
+            content: "“";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            top: -20px;
+            left: -50px;
+        }
+
+        .quote-container:after {
+            content: "”";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            bottom: -75px;
+            right: -30px;
+        }
+
+        .quote-container .quote {
+          width: 90%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000; 
+            text-align: left;
+            margin-top: 32px;
+            letter-spacing: 1.5px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html">Back</a>
+    <br/>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+          {
+            id: 1,
+            title: "Sitcom from a Boring Job Challenge",
+            what: "Create a sitcom concept centered around a mundane or seemingly dull job.",
+            why: "Finds humour and heart in everyday life, highlighting the quirks and dynamics that make even boring jobs entertaining.",
+            how: "Choose the job, identify the eccentric characters and comedic conflicts, and outline the core premise."
+          },
+          {
+            id: 2,
+            title: "Fictional Gadget Realisation Challenge",
+            what: "Take an iconic invention or gadget from a movie or TV show and brainstorm how to make it a reality.",
+            why: "Encourages innovative thinking by reimagining fictional tech in practical, real-world terms.",
+            how: "Identify the gadget, break down its function, and think about current technology or scientific principles that could replicate it."
+          },
+          {
+            id: 3,
+            title: "Extreme Sport Creation Challenge",
+            what: "Transform a mundane activity into an adrenaline-pumping extreme sport.",
+            why: "Encourages creative thinking and reimagines everyday tasks in a thrilling context.",
+            how: "Take a basic activity, add speed, height, danger, or competition, and outline how it works as a sport."
+          },
+          {
+            id: 4,
+            title: "Fictional Land Holiday Guide Challenge",
+            what: "Write a fun holiday guide for a fictional land, highlighting its attractions, culture, and must-visit spots.",
+            why: "Sparks imagination and creative storytelling by blending travel writing with fantasy.",
+            how: "Choose a fictional world, describe its top destinations, local customs, and unique experiences travellers can enjoy."
+          },
+          {
+            id: 5,
+            title: "Historical Event Gone Viral Challenge",
+            what: "Imagine a historical event happening in the age of Instagram and viral media.",
+            why: "Encourages creative thinking about how storytelling and perception would change with modern technology.",
+            how: "Pick an event, craft a viral hashtag, and describe the key moment that would dominate social media."
+          },
+          {
+            id: 6,
+            title: "Child’s Eye Sales Pitch Challenge",
+            what: "Imagine how a child would sell an adult-oriented object, like a car or house.",
+            why: "Encourages playful thinking and simplifies complex features into fun, relatable terms.",
+            how: "Highlight what a child would find exciting, like speed, colours, or 'cool' features."
+          },
+          {
+            id: 7,
+            title: "The Mundane Object Ad Challenge",
+            what: "Create a 30-second ad to convince people they need a common object they’ve never considered before.",
+            why: "Sharpens creativity and reimagines everyday items in a new light.",
+            how: "Pick an object, identify its unique benefit, and pitch it as a revolutionary solution."
+          },
+          {
+            id: 8,
+            title: "Reimagine a Pet Peeve",
+            what: "Take a common pet peeve and redesign the experience to remove the annoyance.",
+            why: "Everyday frustrations are opportunities for meaningful innovation.",
+            how: "Choose a pet peeve (e.g., long lines, tangled cables) and list ways to eliminate or improve it."
+          },
+          {
+            id: 9,
+            title: "Role-play as Someone Else Solving the Problem",
+            what: "Act as a famous person, fictional character, or a completely random persona tackling the problem.",
+            why: "Thinking from another perspective unlocks new ideas.",
+            how: "Pick a role (e.g., Sherlock Holmes, an artist, or a child) and brainstorm as if you were them."
+          },
+          {
+            id: 10,
+            title: "Create a Playlist for the Problem",
+            what: "Curate a short playlist of songs that represent your challenge or solution.",
+            why: "Music helps tap into emotions and sets a tone for creative thinking.",
+            how: "Choose 3-5 songs that evoke moods or themes connected to your task."
+          },
+          {
+            id: 11,
+            title: "Write a 'Day in the Life' for Your Solution",
+            what: "Imagine your solution in action and describe a typical day it might impact.",
+            why: "Builds empathy and brings abstract ideas to life.",
+            how: "Write a paragraph from the perspective of a user or observer interacting with your idea."
+          },
+          {
+            id: 12,
+            title: "Try a Random Sensory Experiment",
+            what: "Focus on one sense for 2 minutes—list sounds, textures, or smells around you.",
+            why: "Heightened sensory awareness can inspire creative associations.",
+            how: "Example: Close your eyes and describe the texture of your desk or the sound of your space."
+          }
+
+]
+
+
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <h2>${card.title}</h2>
+      <p><strong>What</strong></p>
+      <p>${card.what}</p>
+      <p><strong>Why</strong></p>
+      <p>${card.why}</p>
+      <p><strong>How</strong></p>
+      <p>${card.how}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>

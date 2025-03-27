@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovation by Example</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
 
+        .card {
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            width: 80%
+          }
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 16px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            padding: 10px;
+            margin: 16px 32px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container:before {
+            content: "“";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            top: -20px;
+            left: -50px;
+        }
+
+        .quote-container:after {
+            content: "”";
+            font-size: 100px;
+            color: #8b0000;
+            position: absolute;
+            bottom: -75px;
+            right: -30px;
+        }
+
+        .quote-container .quote {
+          width: 90%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000; 
+            text-align: left;
+            margin-top: 32px;
+            letter-spacing: 1.5px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+  <a href="index.html">Back</a>
+    <br/>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+  {
+    "id": 1,
+    "title": "The Birth of the Bottomless Net",
+    "origin": "Early basketball nets had closed bottoms, requiring someone to retrieve the ball manually after each shot.",
+    "pivotal_change": "Switching to open-bottom nets allowed for continuous play, speeding up the game and increasing scoring.",
+    "ripple_effect": "This design change enabled a faster-paced game and greater entertainment value, contributing to basketball’s explosive popularity and the rise of the NBA."
+  },
+  {
+    "id": 2,
+    "title": "Crossbars in Soccer",
+    "origin": "Soccer goals originally had no top crossbar—shots above the posts could still count.",
+    "pivotal_change": "Adding the crossbar standardized the goal’s dimensions and required more precise shooting.",
+    "ripple_effect": "It made goal-scoring more consistent and skill-based, helping regulate global play and enabling the use of technology like goal-line sensors."
+  },
+  {
+    "id": 3,
+    "title": "The Yellow Tennis Ball",
+    "origin": "Tennis balls were originally white, which made them hard to see on color television broadcasts.",
+    "pivotal_change": "The switch to optic yellow improved visibility for viewers watching at home.",
+    "ripple_effect": "This boosted the sport’s broadcast appeal, helping tennis become a global media phenomenon."
+  },
+  {
+    "id": 4,
+    "title": "QWERTY Keyboard's Slow Start",
+    "origin": "The QWERTY layout was designed in the typewriter era to slow down typing and prevent mechanical jams.",
+    "pivotal_change": "Despite its inefficiencies, it became the de facto standard due to early mass adoption.",
+    "ripple_effect": "Now used globally, it demonstrates how legacy systems persist even when better alternatives exist."
+  },
+  {
+    "id": 5,
+    "title": "The Shopping Cart Revolution",
+    "origin": "Shoppers initially used hand-carried baskets, limiting how much they could buy.",
+    "pivotal_change": "The invention of the wheeled shopping cart allowed customers to carry more items easily.",
+    "ripple_effect": "This innovation reshaped consumer habits, expanded supermarket layouts, and increased sales volume."
+  }
+]
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <h2>${card.title}</h2>
+      <p>${card.origin}</p>
+      <p class="quote-container">${card.pivotal_change}</p>
+      <p>${card.ripple_effect}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>

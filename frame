@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovation by Example</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
+
+        .card {
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            width: 80%
+          }
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 16px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            margin: 16px 0;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container .quote {
+          width: 100%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000; 
+            text-align: left;
+            margin-top: 32px;
+            letter-spacing: 1.5px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+  <a href="index.html">Back</a>
+    <br/>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+          {
+            "id": 1,
+            "title": "Invert It",
+            "frame_prompt": "What if the opposite of what you believe is true?",
+            "trigger_question": "Instead of asking how to gain more customers, what if you focused on losing fewer?",
+            "use_case": "Great for rethinking business strategy, retention, or efficiency problems."
+          },
+          {
+            "id": 2,
+            "title": "90-Degree Turn",
+            "frame_prompt": "Look at the problem from a completely unrelated domain.",
+            "trigger_question": "What would a game designer, gardener, or stage director do in this situation?",
+            "use_case": "Ideal for creative brainstorming, product design, and unlocking unusual approaches."
+          },
+          {
+            "id": 3,
+            "title": "Half Built",
+            "frame_prompt": "Assume the system is only 50% finished - what's missing?",
+            "trigger_question": "What part feels unintentionally left out or overlooked?",
+            "use_case": "Useful for product reviews, service audits, or experience mapping."
+          },
+          {
+            "id": 4,
+            "title": "Bizarro World",
+            "frame_prompt": "Imagine a world where your constraints are reversed.",
+            "trigger_question": "What if you had zero budget, or if you had unlimited time?",
+            "use_case": "Helps explore innovation under extreme constraints or abundance."
+          },
+          {
+            "id": 5,
+            "title": "Make It Personal",
+            "frame_prompt": "Shift from abstract to deeply personal.",
+            "trigger_question": "If this was your child's experience, what would you do differently?",
+            "use_case": "Perfect for enhancing empathy in user-centered design or service creation."
+          }
+        ]
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <h2>${card.title}</h2>
+      <p>${card.frame_prompt}</p>
+      <p class="quote-container">${card.trigger_question}</p>
+      <p class="question-container">${card.use_case}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>

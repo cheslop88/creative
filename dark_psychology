@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Game</title>
+    <style>
+        body {
+            font-family: "Arial", Times, serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+        }
 
+        .card {
+            width: 350px;
+            height: auto;
+            padding: 20px;
+            background: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 16px;
+            text-align: left;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+            transform: rotateY(0);
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            width: 80%
+          }
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: rotateY(90deg);
+        }
+
+        .shuffle-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #8b0000; /* Deep red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .shuffle-button:hover {
+            background: #b22222; /* Lighter red */
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000000; 
+            margin-bottom: 16px;
+            border-bottom: 2px solid #b22222;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.4;
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container {
+            font-style: italic;
+            font-size: 16px;
+            color: #8b0000; /* Deep red */
+            position: relative;
+            margin: 16px 0;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .quote-container .quote {
+          width: 100%;
+        }
+
+        .question-container {
+            font-weight: bold;
+            font-size: 18px;
+            color: #000; 
+            text-align: left;
+            margin-top: 32px;
+            letter-spacing: 1.5px;
+        }
+        .reference {
+          color: lightgrey;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+        }
+    </style>
+</head>
+<body>
+  <a href="index.html">Back</a>
+    <br/>
+    <div id="card-container" class="card">
+        <div class="front"></div>
+    </div>
+    <button class="shuffle-button" onclick="shuffleAndShowCard()">Shuffle</button>
+
+
+    <script>
+        const cards = [
+  {
+    "id": 1,
+    "title": "Foot in the Door",
+    "concept": "Start with a small request to increase the chances of getting a bigger 'yes' later.",
+    "real_life_example": "Free plan or 7-day trial in SaaS apps before upselling to premium.",
+    "psychology_trigger": "Consistency bias",
+    "business_use_case": "Use onboarding micro-commitments to increase conversions later (e.g., free quiz > email signup > purchase)."
+  },
+  {
+    "id": 2,
+    "title": "Scarcity & Urgency",
+    "concept": "Create artificial limits on time, quantity, or availability to drive fast decisions.",
+    "real_life_example": "'Only 3 left in stock!' or countdown timers on ecommerce checkout.",
+    "psychology_trigger": "Loss aversion",
+    "business_use_case": "Drive faster purchases by showing stock limits, deadlines, or expiring deals."
+  },
+  {
+    "id": 3,
+    "title": "Decoy Pricing",
+    "concept": "Use an unattractive middle option to make the premium version look more appealing.",
+    "real_life_example": "The Economist offered Print = $125, Online = $59, Print+Online = $125.",
+    "psychology_trigger": "Relativity bias",
+    "business_use_case": "Set pricing tiers to anchor users toward higher-value, higher-margin plans."
+  },
+  {
+    "id": 4,
+    "title": "Reciprocity Trap",
+    "concept": "Give something small to create an unconscious obligation to give back.",
+    "real_life_example": "Free eBook or demo call that leads to sales pressure.",
+    "psychology_trigger": "Reciprocity bias",
+    "business_use_case": "Use free consultations or downloadable resources to increase post-gift conversion."
+  },
+  {
+    "id": 5,
+    "title": "Commitment Escalation",
+    "concept": "Make people feel invested so they continue to avoid wasting their initial effort.",
+    "real_life_example": "Progress bars in onboarding; streaks in apps like Duolingo.",
+    "psychology_trigger": "Sunk cost fallacy",
+    "business_use_case": "Keep users engaged through staged onboarding or usage-based unlocks (e.g., badges, levels)."
+  },
+  {
+    "id": 6,
+    "title": "False Authority & Herd Proof",
+    "concept": "Create the impression that your product is already trusted and widely used.",
+    "real_life_example": "'Trusted by 50,000+ businesses' or fake five-star review snippets.",
+    "psychology_trigger": "Social proof",
+    "business_use_case": "Use testimonials, star ratings, or review counters to reduce buyer friction."
+  },
+  {
+    "id": 7,
+    "title": "Variable Rewards",
+    "concept": "Deliver rewards unpredictably to create addiction-like engagement.",
+    "real_life_example": "Instagram likes, TikTok virality, loot boxes in games.",
+    "psychology_trigger": "Dopamine loop",
+    "business_use_case": "Use gamification mechanics like surprise coupons, mystery boxes, or spin-to-win to increase repeat visits."
+  },
+  {
+    "id": 8,
+    "title": "Obfuscation by Overload",
+    "concept": "Overwhelm users with long legal, pricing, or option overload to bury key details.",
+    "real_life_example": "48-page terms of service or 'compare plans' pages with fine print.",
+    "psychology_trigger": "Decision fatigue",
+    "business_use_case": "Use complexity selectively to nudge users toward default or profitable choices."
+  },
+  {
+    "id": 9,
+    "title": "Mirroring",
+    "concept": "Subtly copy user behavior, tone, or design language to build unconscious trust.",
+    "real_life_example": "Salespeople matching the customer’s speed, tone, or accent.",
+    "psychology_trigger": "Familiarity bias",
+    "business_use_case": "Train support/sales reps to use matching tone and language for rapport-building."
+  },
+  {
+    "id": 10,
+    "title": "Reframing Loss as Gain",
+    "concept": "Present something negative or expensive in a more palatable format.",
+    "real_life_example": "'Just $3/day' instead of '$90/month'; or 'cancel anytime' as a benefit.",
+    "psychology_trigger": "Framing effect",
+    "business_use_case": "Reword pricing and policies to reduce perceived risk and increase attractiveness."
+  }
+]
+
+        let currentCardIndex = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function shuffleAndShowCard() {
+    const cardContainer = document.getElementById('card-container');
+    cardContainer.classList.add('hidden');
+
+    setTimeout(() => {
+        shuffleArray(cards);
+        currentCardIndex = 0;
+        showCard(cards[currentCardIndex]);
+        cardContainer.classList.remove('hidden');
+    }, 600); // Matches animation duration
+}
+
+function showCard(card) {
+    const cardContainer = document.getElementById('card-container');
+    const front = cardContainer.querySelector('.front');
+
+    front.innerHTML = `
+      <span class="reference">${card.id}</span>
+      <h2>${card.title}</h2>
+      <h4>${card.psychology_trigger}</h4>
+      <p>${card.concept}</p>
+      <p class="quote-container">${card.real_life_example}</p>
+      <p class="question-container">${card.business_use_case}</p>
+    `;
+}
+
+// Initial shuffle and display
+shuffleAndShowCard();
+</script>
+</body>
+</html>
